@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="../socket.io/socket.io.js"></script>
+    <script>
+      $(document).ready(function(){
+        //run socket
+        $('a').click(function(){ // a link click event
+          var socket = io.connect();
+          var name = $('#textinput').val();
+          socket.emit('join',$('#textinput').val());
+
+          socket.on('receive',function(data){ // receive 소켓이 연결되면
+            var latitude = data.latitude;     // 데이터를 전송받아서
+            var longitude = data.longitude;   //
+            var output = '';
+            output += '<h3>latitude: ' + latitude + ' </h3>'; //output 변수에 정리해놓고
+            output += '<h3>latitude: ' + longitude + ' </h3>';
+            output += '<h3>latitude: ' + latitude + ' </h3>';
+            $('<li></li>').append(output).prepend('#listview');//li테그의 내용에 output을 추가해서, #listview 노드 아래에 넣어라
+
+            //객체수를 제한
+            var content = $('#content');
+            if(content.children().length > 7){   //#contant 객체의 자식노드수가 7개보다 크면 마지막 자식 노드를 삭제하여 리스트를 7개만 보여줌
+              content.children().last().remove();
+            }
+            $('#listview').listview(refresh);  //listview를 갱신
+          });//end of receive event
+          // start tracking
+          navigator.geolocation.watchPosition(
+            function(position){
+              socket.emit('location',{  //위치정보를 서버로 전송
+                roomName: name,
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              });
+            },function(error){
+              alert(error.message);
+            })//end of navigator.geol.....
+        });//end of $('a').click event
+      });//end of ${document).ready
+    </script>
+    <title>DS_youngun_HOME</title>
+  </head>
+  <body>
+    <!-- 아이디 등록 페이지 - -->
+    <div data-role="page">
+      <div data-roll="header" data-theme="b">
+        <h1>Location Tracker</h1>
+      </div>
+      <div data-role="content">
+        <div data-role="fieldcontain">
+          <label for="textinput">name</label>
+          <input type="text" id="textinput"/>
+        </div>
+        <a href="#tracker" class="ui-btn" ui-btn-b>Start Track</a>
+      </div>
+    </div>
+    <!-- 위치추적 페이지 --------------->
+    <div data-role="page" id="tracker">
+      <div data-role="header" data-theme="b">
+        <h1>Location Tracker</h1>
+      </div>
+      <div data-role="content">
+        <ul id="listview" data-role="listview" data-inset="true"></ul>
+      </div>
+    </div>
+  </body>
+</html>
