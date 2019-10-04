@@ -6,13 +6,12 @@ const express = require('express');
 const mysql = require('mysql');
 const socketio = require('socket.io');
 
-const port1= 3000;
-const port2= 3001;
+const portHttp= 80;
+const portHttps= 443;
 
 const options = {
-    key: fs.readFileSync('./certkey/privkey.pem'),
-    cert: fs.readFileSync('./certkey/cert.pem'),
-    ca: fs.readFileSync('./certkey/chain.pem')
+  key: fs.readFileSync('/etc/letsencrypt/live/www.unitedin.kr/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/www.unitedin.kr/cert.pem')
 };
 
 
@@ -29,12 +28,12 @@ app.use(function(request, response){
 });
 
 //run http server
-httpServer.listen(port1,function(){
-  console.log('$sync Server is running at localhost:' + port1);
+httpServer.listen(portHttp,function(){
+  console.log('$sync Server is running at localhost:' + portHttp);
 });
 // run https server
-httpsServer.listen(port2,function(){
-  console.log('$sync Server is running at localhost:' + port2);
+httpsServer.listen(portHttps,function(){
+  console.log('$sync Server is running at localhost:' + portHttps);
 });
 
 //run socket server on httpServer
