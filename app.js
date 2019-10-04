@@ -21,11 +21,11 @@ var httpServer = http.createServer(app);
 var httpsServer = https.createServer(options,app);
 
 // http => https 리디렉션
-app.use(function(request, response){
-  if(!request.secure){
-    response.redirect("https://" + request.headers.host + request.url);
-  }
-});
+// app.use(function(request, response){
+//   if(!request.secure){
+//     response.redirect("https://" + request.headers.host + request.url);
+//   }
+// });
 
 //run http server
 httpServer.listen(portHttp,function(){
